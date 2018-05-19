@@ -32,4 +32,8 @@
     <string name="qs_menu_item_rows_landscape">Rows landscape</string>
     <string name="qs_menu_item_qs_columns">Quickbar columns</string>
 
+    <!-- AmbientPlay: The contents of the displayed recognition. -->
+    <string name="ambient_recognition_notification">Now Playing</string>
+    <string name="ambient_recognition_information">%1$s by %2$s</string>
+
  </resources>
