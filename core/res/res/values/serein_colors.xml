@@ -21,5 +21,6 @@
     <color name="power_menu_advanced_recovery">@*android:color/omni_color5</color>
     <color name="power_menu_advanced_system_restart_ui">@*android:color/omni_color5</color>
     <color name="power_menu_screenshot">@*android:color/omni_color5</color>
+    <color name="power_menu_hot_reboot">@*android:color/omni_color5</color>
 
 </resources>
