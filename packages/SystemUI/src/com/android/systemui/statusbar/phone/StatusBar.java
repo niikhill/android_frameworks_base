@@ -65,6 +65,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -248,6 +249,7 @@ import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.volume.VolumeComponent;
+import android.database.ContentObserver;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -647,6 +649,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     private boolean mVibrateOnOpening;
     private VibratorHelper mVibratorHelper;
 
+    private boolean mLockscreenMediaMetadata;
+
     private AmbientIndicationManager mAmbientIndicationManager;
     private boolean mRecognitionEnabled;
     private boolean mRecognitionEnabledOnKeyguard;
@@ -739,6 +743,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         createAndAddWindows();
+        mSSettingsObserver.observe();
+        mSSettingsObserver.update();
 
         // Make sure we always have the most current wallpaper info.
         IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
@@ -4689,6 +4695,33 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         }
     };
+
+    private SSettingsObserver mSSettingsObserver = new SSettingsObserver(mHandler);
+    private class SSettingsObserver extends ContentObserver {
+        SSettingsObserver(Handler handler) {
+            super(handler);
+        }
+         void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_MEDIA_METADATA),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            update();
+        }
+
+          public void update() {
+            setLockscreenMediaMetadata();
+        }
+    }
+
+    private void setLockscreenMediaMetadata() {
+        mLockscreenMediaMetadata = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_MEDIA_METADATA, 0, UserHandle.USER_CURRENT) == 1;
+    }
 
     public int getWakefulnessState() {
         return mWakefulnessLifecycle.getWakefulness();
