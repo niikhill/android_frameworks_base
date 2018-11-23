@@ -20,6 +20,7 @@ package com.android.internal.util.omni;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserHandle;
+import android.content.pm.PackageManager;
 import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -84,6 +85,13 @@ public class OmniUtils {
                         InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
             }
         }, 20);
+    }
+
+    public static void switchScreenOff(Context ctx) {
+        PowerManager pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+        if (pm!= null) {
+            pm.goToSleep(SystemClock.uptimeMillis());
+        }
     }
 
     public static void goToSleep(Context context) {
